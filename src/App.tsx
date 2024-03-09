@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { FormAddTodo } from "./components/FormAddTodo";
+import Todos from "./components/Todos";
 
-interface Todo {
+export interface Todo {
   text: string;
   complete: boolean;
 }
@@ -11,8 +13,8 @@ const initialTodos = [
     complete: false,
   },
   {
-    text:"learn TypeScript",
-    complete: false,
+    text: "learn TypeScript",
+    complete: true,
   },
 ];
 
@@ -23,17 +25,47 @@ const App = () => {
 
   const [todos, setTodos] = useState<Todo[]>(initialTodos);
 
+  const addTodo = (text: string) => {
+    const newTodo = {
+      text,
+      complete: false,
+    };
+    setTodos([...todos, newTodo]);
+  }
+
+  const toggleTodo = (selectedTodo: Todo) => {
+    setTodos(prevTodos => {
+      return prevTodos.map(todo => {
+        if (todo === selectedTodo) {
+          return {
+            ...todo,
+            complete: !todo.complete
+          }
+        }
+        return todo;
+      })
+    });
+  };
+
+
+  const removeTodo = (selectedTodo: Todo) => {
+    setTodos((prevTodos) => {
+      return prevTodos.filter((todo) => todo !== selectedTodo)
+    })
+  }
+
 
   return (
     <div className="container">
       <h1>TooDo</h1>
-      <form>
-        <label htmlFor="todo">
-          Todo
-          <input type="text" id="todo" placeholder="ingrese todo"/>
-          <button type="submit">Add todo</button>
-        </label>
-      </form>
+      <FormAddTodo addTodo={addTodo} />
+      <div>
+        <Todos
+          todos={todos}
+          toggleTodo={toggleTodo}
+          removeTodo={removeTodo}
+        />
+      </div>
     </div>
   )
 }
